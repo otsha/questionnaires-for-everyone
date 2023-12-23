@@ -1,9 +1,9 @@
 import { React, useState } from 'react'
-import { Button, Container, Flex, Text, Textarea, VStack } from '@chakra-ui/react'
-import LangSelectDropdown from './LangSelectDropdown'
-import TranslationView from './TranslationView'
+import { Button, Flex, Text, Textarea } from '@chakra-ui/react'
+import { translate } from './Scripts/translationService'
 
-const baseURL = import.meta.env.VITE_API_URL
+import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
+import TranslationView from './Components/Translation/TranslationView'
 
 const App = () => {
   const [original, setOriginal] = useState([])
@@ -15,24 +15,6 @@ const App = () => {
   const handleInput = (e) => {
     const items = e.target.value.split('\n')
     setOriginal(items)
-  }
-
-  const translate = async (text, from, to) => {
-    const response = await fetch(`${baseURL}/translate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        data: text,
-        listType: 'single',
-        sourceLang: from,
-        targetLang: to
-      }),
-    })
-
-    const result = await response.json()
-    return result.translated
   }
 
   const handleTranslate = async () => {

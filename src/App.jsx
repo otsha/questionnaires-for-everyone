@@ -18,7 +18,10 @@ const App = () => {
   }
 
   const handleTranslate = async () => {
-    const fwTranslated = await translate(original, sourceLang, targetLang)
+    const uniqueItems = [...new Set(original)]
+    setOriginal(uniqueItems)
+    
+    const fwTranslated = await translate(uniqueItems, sourceLang, targetLang)
     setTranslation(fwTranslated)
   }
 
@@ -29,6 +32,7 @@ const App = () => {
       Deepl target language cannot be EN, has to be either EN-GB or -US 
       Annoying, because source lang has to be EN, and cannot be EN-GB or -US
     */
+   
     if (sourceLang.includes('EN')) {
       backtranslateTo = 'EN-US'
     }

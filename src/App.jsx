@@ -5,6 +5,7 @@ import { translate } from './Scripts/translationService'
 import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
 import TranslationView from './Components/Translation/TranslationView'
 import { DeleteIcon } from '@chakra-ui/icons'
+import EvaluationResultList from './Components/Evaluation/EvaluationResultList'
 
 const App = () => {
   const [original, setOriginal] = useState([])
@@ -12,6 +13,7 @@ const App = () => {
   const [backTranslation, setBackTranslation] = useState([])
   const [sourceLang, setSourceLang] = useState('EN')
   const [targetLang, setTargetLang] = useState('FI')
+  const [evaluationResult, setEvaluationResult] = useState([])
 
   const handleInput = (e) => {
     const items = e.target.value.split('\n')
@@ -40,6 +42,14 @@ const App = () => {
 
     const bTranslated = await translate(translation, targetLang, backtranslateTo)
     setBackTranslation(bTranslated)
+  }
+
+  const handleEvaluate = async () => {
+    console.log('evaluating...')
+    setEvaluationResult([
+      { title: "GEMBA", score: Math.round(Math.random() * 100)},
+      { title: "SSA", score: Math.round(Math.random() * 100), reasoning: 'The translation provides an overall good semantic match. Consider changing \"ABC\" to \"XYZ\".'}
+    ])
   }
 
   const handleReset = async () => {
@@ -83,17 +93,18 @@ const App = () => {
           <Button onClick={handleTranslate}>Translate</Button>
         </>
         : <> 
-            <TranslationView 
-              originalList={original} 
-              translationList={translation} 
-              setTranslationList={setTranslation} 
-              backTranslationList={backTranslation}
-              backTranslate={handleBacktranslate}
-              reset={handleReset}
-            />
+          <TranslationView 
+            originalList={original} 
+            translationList={translation} 
+            setTranslationList={setTranslation} 
+            backTranslationList={backTranslation}
+            backTranslate={handleBacktranslate}
+            reset={handleReset}
+          />
+          <Button onClick={handleEvaluate}>Evaluate</Button>
+          <EvaluationResultList results={evaluationResult} />
         </>
       }
-      
     </Flex>
   )
 }

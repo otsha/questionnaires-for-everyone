@@ -33,9 +33,12 @@ const EvaluationResultCard = ({ result }) => {
           <CircularProgressLabel fontWeight="bold">{result.score}</CircularProgressLabel>
         </CircularProgress>
       </CardHeader>
-      {result.reasoning && 
+      {result.title == 'SSA' && 
         <CardBody>
-          {result.reasoning}
+          <Heading size="xs">Justification</Heading>
+          {result.reasoning && result.reasoning}
+          <Heading size="xs">Suggestions</Heading>
+          {result.suggestions && result.suggestions}
         </CardBody>
       }
     </Card>

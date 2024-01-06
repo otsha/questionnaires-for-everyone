@@ -35,8 +35,13 @@ const evaluate = async (original, translation, backTranslation, originalLang, ta
   })
   
   const result = await response.json()
-  console.log(result)
-  return result
+  const gemba = result.gemba
+  const semantic = await JSON.parse(result.semantic)
+
+  return {
+    gemba: gemba,
+    semantic: semantic
+  }
 }
 
 export { translate, evaluate }

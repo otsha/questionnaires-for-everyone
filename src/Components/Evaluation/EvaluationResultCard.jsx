@@ -28,17 +28,25 @@ const EvaluationResultCard = ({ result }) => {
   return (
     <Card width="50%" mt="0.5rem">
       <CardHeader bg="gray.100" display="flex" flexDir="row" justifyContent="space-between" alignItems="center">
-        <Heading size="xs">{result.title}<Tooltip label={selectResultInfoLabel()}><InfoOutlineIcon ml="0.25rem" mb="0.25rem" /></Tooltip></Heading>
+        <Heading size="sm">{result.title}<Tooltip label={selectResultInfoLabel()}><InfoOutlineIcon ml="0.25rem" mb="0.25rem" /></Tooltip></Heading>
         <CircularProgress value={result.score} color={selectResultScoreColor()} size="64px" thickness="14px">
           <CircularProgressLabel fontWeight="bold">{result.score}</CircularProgressLabel>
         </CircularProgress>
       </CardHeader>
       {result.title == 'SSA' && 
         <CardBody>
-          <Heading size="xs">Justification</Heading>
-          {result.reasoning && result.reasoning}
-          <Heading size="xs">Suggestions</Heading>
-          {result.suggestions && result.suggestions}
+          {result.reasoning && 
+          <>
+            <Heading size="xs" mb="0.25rem">Justification</Heading>
+            <p>{result.reasoning}</p>
+          </>
+          }
+          {result.suggestions &&
+          <>
+          <Heading size="xs" mb="0.25rem" mt="1rem">Suggestions</Heading>
+          <p>{result.suggestions}</p>
+          </>
+          }
         </CardBody>
       }
     </Card>

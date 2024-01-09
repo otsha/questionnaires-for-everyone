@@ -4,6 +4,7 @@ import { translate } from './Scripts/translationService'
 
 import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
 import TranslationView from './Components/Translation/TranslationView'
+import { DeleteIcon } from '@chakra-ui/icons'
 
 const App = () => {
   const [original, setOriginal] = useState([])
@@ -41,9 +42,23 @@ const App = () => {
     setBackTranslation(bTranslated)
   }
 
+  const handleReset = async () => {
+    setBackTranslation([])
+    await handleTranslate()
+  }
+
+  const handleFullReset = async () => {
+    setOriginal([])
+    setTranslation([])
+    setBackTranslation([])
+  }
+
   return (
     <Flex flexDir='column' justifyContent='flex-start' width={['95%', '95%', '80%', '50%']}>
-      <Heading fontSize='4xl' mt="4rem">Questionnaire Translator</Heading>
+      <Flex mt="4rem" flexDir='row' justifyContent='space-between' alignItems='center'>
+        <Heading fontSize='4xl'>Questionnaire Translator</Heading>
+        {translation.length > 0 && <Button rightIcon={<DeleteIcon />} colorScheme='red' onClick={handleFullReset}>Start over</Button>}
+      </Flex>
       <Divider mt="1rem" mb="4rem"/>
       {(translation.length < 1)
         ? <>
@@ -74,6 +89,7 @@ const App = () => {
               setTranslationList={setTranslation} 
               backTranslationList={backTranslation}
               backTranslate={handleBacktranslate}
+              reset={handleReset}
             />
         </>
       }

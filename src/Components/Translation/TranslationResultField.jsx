@@ -1,17 +1,19 @@
 import React from 'react'
 
-import { Input } from '@chakra-ui/react'
+import { Input, Skeleton } from '@chakra-ui/react'
 
-const TranslationResultField = ({ result, disabled, handleTweak }) => {
+const TranslationResultField = ({ result, disabled, handleTweak, loading }) => {
 
   return (
-    <Input 
-      isDisabled={disabled}
-      value={result}
-      onChange={(e) => handleTweak(result, e.target.value)} 
-      size='sm'
-      variant={disabled ? 'filled' : 'flushed'}
-    />
+    <Skeleton isLoaded={!loading} width="100%">
+      <Input 
+        isDisabled={disabled}
+        value={result}
+        onChange={(e) => handleTweak(result, e.target.value)} 
+        size='sm'
+        variant={disabled ? 'filled' : 'flushed'}
+      />
+    </Skeleton>
   )
 }
   

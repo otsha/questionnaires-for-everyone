@@ -7,7 +7,7 @@ const EvaluationResultList = ({ results }) => {
   return (
     <VStack m="1rem">
       {results.length > 0 && results.map((res) =>
-        <EvaluationResultCard result={res} /> 
+        <EvaluationResultCard key={res.title} result={res} /> 
       )}
     </VStack>
   )

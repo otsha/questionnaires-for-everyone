@@ -6,7 +6,7 @@ const EvaluationResultCard = ({ result }) => {
 
   const selectResultInfoLabel = () => {
     switch (result.title) {
-      case 'GEMBA':
+      case 'GEMBA-DA':
         return 'An overall score of translation quality.'
       case 'SSA':
         return 'Semantic similarity assessment. Experimental.'

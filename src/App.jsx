@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading } from '@chakra-ui/react'
+import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Spinner } from '@chakra-ui/react'
 import { translate, evaluate } from './Scripts/translationService'
 
 import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
@@ -14,6 +14,7 @@ const App = () => {
   const [sourceLang, setSourceLang] = useState('EN')
   const [targetLang, setTargetLang] = useState('FI')
   const [evaluationResult, setEvaluationResult] = useState([])
+  const [isEvaluating, setIsEvaluating] = useBoolean(false)
 
   const handleInput = (e) => {
     const items = e.target.value.split('\n')
@@ -45,19 +46,21 @@ const App = () => {
   }
 
   const handleEvaluate = async () => {
-    console.log('backtranslating...')
+    setIsEvaluating.on()
+    setEvaluationResult([])
     await handleBacktranslate()
 
-    console.log('evaluating...')
     const evaluation = await evaluate(original, translation, backTranslation, sourceLang, targetLang)
     setEvaluationResult([
-      { title: "GEMBA", score: parseInt(evaluation.gemba)},
+      { title: "GEMBA-DA", score: parseInt(evaluation.gemba)},
       { title: "SSA", score: parseInt(evaluation.semantic.score), suggestions: evaluation.semantic.suggestions, reasoning: evaluation.semantic.reasoning}
     ])
+    setIsEvaluating.off()
   }
 
   const handleReset = async () => {
     setBackTranslation([])
+    setEvaluationResult([])
     await handleTranslate()
   }
 
@@ -65,6 +68,7 @@ const App = () => {
     setOriginal([])
     setTranslation([])
     setBackTranslation([])
+    setEvaluationResult([])
   }
 
   return (
@@ -104,9 +108,10 @@ const App = () => {
             backTranslationList={backTranslation}
             backTranslate={handleBacktranslate}
             reset={handleReset}
+            evaluate={handleEvaluate}
           />
-          <Button onClick={handleEvaluate}>Evaluate</Button>
-          <EvaluationResultList results={evaluationResult} />
+          {isEvaluating && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='teal.400'/>}
+          {evaluationResult.length > 0 && <EvaluationResultList results={evaluationResult} />}
         </>
       }
     </Flex>

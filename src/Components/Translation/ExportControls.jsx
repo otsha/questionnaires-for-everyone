@@ -29,7 +29,15 @@ const ExportControls = ({ originalItems, translatedItems }) => {
   }
   
   return (
-    <HStack justifyContent='flex-end'>
+    <HStack justifyContent='center' mt="2rem">
+        <Button 
+            rightIcon={hasCopied ? <CheckIcon /> : <CopyIcon />} 
+            onClick={onCopy}
+            variant={hasCopied ? 'outline': 'solid'}
+            width='12rem'
+          >
+          {hasCopied ? 'Copied' : 'Copy to clipboard'}
+        </Button>
         <Link
           href={window.URL.createObjectURL(new Blob([csvList], { type: 'text/csv' }))}
           download='translation_result.csv'
@@ -38,18 +46,11 @@ const ExportControls = ({ originalItems, translatedItems }) => {
             rightIcon={<DownloadIcon />}
             isLoading={isLoading}
             onClick={handleCSVDowload}
+            width="12rem"
           >
             Download .CSV
           </Button>
         </Link>
-        <Button 
-          rightIcon={hasCopied ? <CheckIcon /> : <CopyIcon />} 
-          onClick={onCopy}
-          variant={hasCopied ? 'outline': 'solid'}
-          width='12rem'
-        >
-          {hasCopied ? 'Copied' : 'Copy to clipboard'}
-        </Button>
     </HStack>
   )
 }

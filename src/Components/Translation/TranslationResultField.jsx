@@ -10,7 +10,7 @@ const TranslationResultField = ({ result, disabled, handleTweak, loading }) => {
         isDisabled={disabled}
         value={result}
         onChange={(e) => handleTweak(result, e.target.value)} 
-        size='sm'
+        size='md'
         variant={disabled ? 'filled' : 'flushed'}
       />
     </Skeleton>

@@ -20,7 +20,7 @@ const ResetButton = ({ handleReset }) => {
         rightIcon={<RepeatClockIcon />} 
         onClick={reset} 
         width="10rem" 
-        variant='ghost'
+        variant='outline'
         isLoading={isResetting}
         colorScheme='red'
       >

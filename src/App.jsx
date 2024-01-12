@@ -1,10 +1,11 @@
 import { React, useState } from 'react'
-import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading } from '@chakra-ui/react'
-import { translate } from './Scripts/translationService'
+import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Spinner } from '@chakra-ui/react'
+import { translate, evaluate } from './Scripts/translationService'
 
 import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
 import TranslationView from './Components/Translation/TranslationView'
 import { DeleteIcon } from '@chakra-ui/icons'
+import EvaluationResultList from './Components/Evaluation/EvaluationResultList'
 
 const App = () => {
   const [original, setOriginal] = useState([])
@@ -12,6 +13,8 @@ const App = () => {
   const [backTranslation, setBackTranslation] = useState([])
   const [sourceLang, setSourceLang] = useState('EN')
   const [targetLang, setTargetLang] = useState('FI')
+  const [evaluationResult, setEvaluationResult] = useState([])
+  const [isEvaluating, setIsEvaluating] = useBoolean(false)
 
   const handleInput = (e) => {
     const items = e.target.value.split('\n')
@@ -42,8 +45,22 @@ const App = () => {
     setBackTranslation(bTranslated)
   }
 
+  const handleEvaluate = async () => {
+    setIsEvaluating.on()
+    setEvaluationResult([])
+    await handleBacktranslate()
+
+    const evaluation = await evaluate(original, translation, backTranslation, sourceLang, targetLang)
+    setEvaluationResult([
+      { title: "GEMBA-DA", score: parseInt(evaluation.gemba)},
+      { title: "SSA", score: parseInt(evaluation.semantic.score), suggestions: evaluation.semantic.suggestions, reasoning: evaluation.semantic.reasoning}
+    ])
+    setIsEvaluating.off()
+  }
+
   const handleReset = async () => {
     setBackTranslation([])
+    setEvaluationResult([])
     await handleTranslate()
   }
 
@@ -51,6 +68,7 @@ const App = () => {
     setOriginal([])
     setTranslation([])
     setBackTranslation([])
+    setEvaluationResult([])
   }
 
   return (
@@ -83,17 +101,19 @@ const App = () => {
           <Button onClick={handleTranslate}>Translate</Button>
         </>
         : <> 
-            <TranslationView 
-              originalList={original} 
-              translationList={translation} 
-              setTranslationList={setTranslation} 
-              backTranslationList={backTranslation}
-              backTranslate={handleBacktranslate}
-              reset={handleReset}
-            />
+          <TranslationView 
+            originalList={original} 
+            translationList={translation} 
+            setTranslationList={setTranslation} 
+            backTranslationList={backTranslation}
+            backTranslate={handleBacktranslate}
+            reset={handleReset}
+            evaluate={handleEvaluate}
+          />
+          {isEvaluating && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='teal.400'/>}
+          {evaluationResult.length > 0 && <EvaluationResultList results={evaluationResult} />}
         </>
       }
-      
     </Flex>
   )
 }

@@ -3,10 +3,10 @@ import { VStack, Button, HStack, Divider, Box, AbsoluteCenter, Heading, Tooltip,
 import TranslationResultField from './TranslationResultField'
 import BacktranslationResultField from './BacktranslationResultField'
 import ExportControls from './ExportControls'
-import { RepeatIcon } from '@chakra-ui/icons'
+import { ChatIcon, RepeatIcon } from '@chakra-ui/icons'
 import ResetButton from '../ResetButton'
 
-const TranslationView = ({ originalList, translationList, setTranslationList, backTranslationList, backTranslate, reset }) => {
+const TranslationView = ({ originalList, translationList, setTranslationList, backTranslationList, backTranslate, reset, evaluate }) => {
   const [leftSideUpdating, setLeftSideUpdating] = useBoolean(false)
   const [rightSideUpdating, setRightSideUpdating] = useBoolean(false)
 
@@ -47,7 +47,10 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
           <AbsoluteCenter bg='white' p='1rem'>
             <VStack>
               <Tooltip label='Translates the translation back to the original language for comparison.'>
-                <Button rightIcon={<RepeatIcon />} onClick={() => handleLoad(backTranslate, true)} width="10rem">Backtranslate</Button>
+                <Button rightIcon={<RepeatIcon />} onClick={() => handleLoad(backTranslate, true)} width="10rem" colorScheme='teal'>Backtranslate</Button>
+              </Tooltip>
+              <Tooltip label='Propmpts GPT-4 to assess the translation quality.'>
+                <Button rightIcon={<ChatIcon />} onClick={() => handleLoad(evaluate, false)} width="10rem" colorScheme='teal' variant='outline'>Evaluate</Button>
               </Tooltip>
               <ResetButton handleReset={() => handleLoad(reset, false)} />
             </VStack>

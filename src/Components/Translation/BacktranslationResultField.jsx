@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import { Button, Input, InputGroup, InputRightElement, useBoolean, Tag, Skeleton, HStack, Tooltip } from '@chakra-ui/react'
+import { Button, Input, InputGroup, InputRightElement, useBoolean, Tag, Skeleton, HStack, Tooltip, Textarea } from '@chakra-ui/react'
 import { ViewIcon } from '@chakra-ui/icons'
 
 const BacktranslationResultField = ({ list, result, original, loading }) => {
@@ -13,7 +13,7 @@ const BacktranslationResultField = ({ list, result, original, loading }) => {
   return (
     <Skeleton isLoaded={!loading} width="100%">
       <HStack size='sm'>
-        <Input 
+        <Textarea 
           isDisabled={true}
           value={showOriginal ? original : result}
           isInvalid={true}

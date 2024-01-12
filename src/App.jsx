@@ -1,41 +1,99 @@
 import { React, useState } from 'react'
-import { Button, Flex, Text, Textarea } from '@chakra-ui/react'
+import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading } from '@chakra-ui/react'
+import { translate } from './Scripts/translationService'
 
-const baseURL = import.meta.env.VITE_API_URL
+import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
+import TranslationView from './Components/Translation/TranslationView'
+import { DeleteIcon } from '@chakra-ui/icons'
 
 const App = () => {
-  const [original, setOriginal] = useState('')
-  const [translated, setTranslated] = useState('')
+  const [original, setOriginal] = useState([])
+  const [translation, setTranslation] = useState([])
+  const [backTranslation, setBackTranslation] = useState([])
+  const [sourceLang, setSourceLang] = useState('EN')
+  const [targetLang, setTargetLang] = useState('FI')
 
   const handleInput = (e) => {
-    const newValue = e.target.value
-    setOriginal(newValue)
+    const items = e.target.value.split('\n')
+    setOriginal(items)
   }
 
   const handleTranslate = async () => {
-    const response = await fetch(`${baseURL}/translate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        data: [original],
-        listType: 'single',
-        sourceLang: 'EN',
-        targetLang: 'FI'
-      }),
-    })
+    const uniqueItems = [...new Set(original)]
+    setOriginal(uniqueItems)
+    
+    const fwTranslated = await translate(uniqueItems, sourceLang, targetLang)
+    setTranslation(fwTranslated)
+  }
 
-    const result = await response.json()
-    setTranslated(result.translated)
+  const handleBacktranslate = async () => {
+    let backtranslateTo = sourceLang
+
+    /* 
+      Deepl target language cannot be EN, has to be either EN-GB or -US 
+      Annoying, because source lang has to be EN, and cannot be EN-GB or -US
+    */
+   
+    if (sourceLang.includes('EN')) {
+      backtranslateTo = 'EN-US'
+    }
+
+    const bTranslated = await translate(translation, targetLang, backtranslateTo)
+    setBackTranslation(bTranslated)
+  }
+
+  const handleReset = async () => {
+    setBackTranslation([])
+    await handleTranslate()
+  }
+
+  const handleFullReset = async () => {
+    setOriginal([])
+    setTranslation([])
+    setBackTranslation([])
   }
 
   return (
-    <Flex flexDir='column' justifyContent='center' width="50%">
-      <Text fontSize='4xl'>Translator</Text>
-      <Textarea onChange={handleInput} value={original} />
-      <Textarea isDisabled={true} value={translated} onChange={() => {}}/>
-      <Button onClick={handleTranslate}>Translate</Button>
+    <Flex flexDir='column' justifyContent='flex-start' width={['95%', '95%', '80%', '50%']}>
+      <Flex mt="4rem" flexDir='row' justifyContent='space-between' alignItems='center'>
+        <Heading fontSize='4xl'>Questionnaire Translator</Heading>
+        {translation.length > 0 && <Button rightIcon={<DeleteIcon />} colorScheme='red' onClick={handleFullReset}>Start over</Button>}
+      </Flex>
+      <Divider mt="1rem" mb="4rem"/>
+      {(translation.length < 1)
+        ? <>
+          <HStack align="stretch" spacing="4rem">
+            <VStack align="start" spacing="0.25rem" width="50%">
+              <Text>Translate from:</Text>
+              <LangSelectDropdown handleSelect={setSourceLang} defaultValue={sourceLang} />
+            </VStack>
+            <VStack align="start" spacing="0.25rem" width="50%">
+              <Text>Translate to:</Text>
+              <LangSelectDropdown handleSelect={setTargetLang} defaultValue={targetLang} />
+            </VStack>
+          </HStack>
+          <Divider mt="2rem" mb="2rem"/>
+          <Text mb="0.25rem">Enter questionnaire items:</Text>
+          <Textarea 
+            height="lg"
+            onChange={handleInput}
+            value={original.join('\n')} mb='2em'
+            placeholder={'Questionnaire items separated by a newline, e.g. \n\nThis is a questionnaire item.\nThis is another questionnaire item.\nThis is a third questionnaire item.'}
+          />
+          <Button onClick={handleTranslate}>Translate</Button>
+        </>
+        : <> 
+            <TranslationView 
+              originalList={original} 
+              translationList={translation} 
+              setTranslationList={setTranslation} 
+              backTranslationList={backTranslation}
+              backTranslate={handleBacktranslate}
+              reset={handleReset}
+            />
+        </>
+      }
+      
     </Flex>
   )
 }

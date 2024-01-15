@@ -1,8 +1,7 @@
 import { React } from 'react'
-import { VStack, Button, HStack, Divider, Box, AbsoluteCenter, Heading, Tooltip, useBoolean } from '@chakra-ui/react'
+import { VStack, Button, HStack, Divider, Box, AbsoluteCenter, Heading, Tooltip, useBoolean, Flex } from '@chakra-ui/react'
 import TranslationResultField from './TranslationResultField'
 import BacktranslationResultField from './BacktranslationResultField'
-import ExportControls from './ExportControls'
 import { ChatIcon, RepeatIcon } from '@chakra-ui/icons'
 import ResetButton from '../ResetButton'
 
@@ -33,8 +32,8 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
   }
 
   return (
-    <>
-      <HStack align="stretch" spacing="2rem">
+    <Flex flexDir='column' justify='center' align='stretch'>
+      <HStack align="stretch" spacing="2rem" height='100%'>
         <VStack width='50%' align="start">
         <Heading size='md'>Tweak translation</Heading>
           <Divider mt="0.1rem" mb="1rem"/>
@@ -42,20 +41,7 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
             return <TranslationResultField key={`tl-result-${translationList.indexOf(i)}`} result={i} handleTweak={tweakTranslationItem} loading={leftSideUpdating}/>
           })}
         </VStack>
-        <Box position='relative' mx='4rem' height='100%'>
-          <Divider orientation='vertical'/>
-          <AbsoluteCenter bg='white' p='1rem'>
-            <VStack>
-              <Tooltip label='Translates the translation back to the original language for comparison.'>
-                <Button rightIcon={<RepeatIcon />} onClick={() => handleLoad(backTranslate, true)} width="10rem" colorScheme='teal'>Backtranslate</Button>
-              </Tooltip>
-              <Tooltip label='Propmpts GPT-4 to assess the translation quality.'>
-                <Button rightIcon={<ChatIcon />} onClick={() => handleLoad(evaluate, false)} width="10rem" colorScheme='teal' variant='outline'>Evaluate</Button>
-              </Tooltip>
-              <ResetButton handleReset={() => handleLoad(reset, false)} />
-            </VStack>
-          </AbsoluteCenter>
-        </Box>
+        <Divider orientation='vertical' />
         <VStack width='50%' align='start'>
           <Heading size='md'>Compare to original</Heading>
           <Divider mt="0.1rem" mb="1rem"/>
@@ -69,8 +55,16 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
           }
         </VStack>
       </HStack>
-      <ExportControls originalItems={originalList} translatedItems={translationList} />
-    </>
+      <HStack justify='center' mt="2rem">
+        <ResetButton handleReset={() => handleLoad(reset, false)} />
+        <Tooltip label='Translates the translation back to the original language for comparison.'>
+          <Button rightIcon={<RepeatIcon />} onClick={() => handleLoad(backTranslate, true)} width="10rem" colorScheme='teal'>Backtranslate</Button>
+        </Tooltip>
+        <Tooltip label='Propmpts GPT-4 to assess the translation quality.'>
+          <Button rightIcon={<ChatIcon />} onClick={() => handleLoad(evaluate, false)} width="10rem" colorScheme='teal' variant='outline'>Evaluate</Button>
+        </Tooltip>
+      </HStack>
+    </Flex>
   )
 }
 

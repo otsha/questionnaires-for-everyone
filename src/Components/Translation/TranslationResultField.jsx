@@ -8,6 +8,10 @@ const TranslationResultField = ({ result, disabled, handleTweak, loading }) => {
     <Skeleton isLoaded={!loading} width="100%">
       <Textarea 
         isDisabled={disabled}
+        color={disabled && 'orange.900'}
+        bg={disabled && 'orange.50'}
+        borderWidth={disabled && '1px'}
+        borderColor={disabled && 'gray.300'}
         value={result}
         onChange={(e) => handleTweak(result, e.target.value)} 
         size='md'

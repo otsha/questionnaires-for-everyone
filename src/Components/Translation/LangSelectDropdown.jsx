@@ -6,6 +6,7 @@ const LangSelectDropdown = ({ handleSelect, defaultValue }) => {
     <Select placeholder='Select Language...' size='sm' defaultValue={defaultValue} onChange={(e) => handleSelect(e.target.value)} >
       <option value='EN'>English</option>
       <option value='FI'>Finnish</option>
+      <option value='DE'>German</option>
     </Select>
   )
 }

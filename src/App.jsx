@@ -1,6 +1,6 @@
 import { React, useState } from 'react'
-import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Spinner, Stack, Alert, AlertIcon } from '@chakra-ui/react'
-import { DeleteIcon } from '@chakra-ui/icons'
+import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Spinner, Stack, Alert, AlertIcon, Tooltip } from '@chakra-ui/react'
+import { DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons'
 import { translate, evaluate } from './Scripts/translationService'
 
 import LangSelectDropdown from './Components/Translation/LangSelectDropdown'
@@ -55,16 +55,26 @@ const App = () => {
   }
 
   const handleEvaluate = async () => {
-    setIsEvaluating.on()
-    setEvaluationResult([])
-    await handleBacktranslate()
+    try {
+      setIsEvaluating.on()
+      setEvaluationResult([])
+      await handleBacktranslate()
 
-    const evaluation = await evaluate(original, translation, backTranslation, sourceLang, targetLang)
-    setEvaluationResult([
-      { title: "GEMBA-DA", score: parseInt(evaluation.gemba)},
-      { title: "SSA", score: parseInt(evaluation.semantic.score), suggestions: evaluation.semantic.suggestions, reasoning: evaluation.semantic.reasoning}
-    ])
-    setIsEvaluating.off()
+      const evaluation = await evaluate(original, translation, backTranslation, sourceLang, targetLang)
+      setEvaluationResult([
+        { title: "GEMBA-DA", score: parseInt(evaluation.gemba)},
+        { title: "SSA", 
+          score: parseInt(evaluation.semantic.score), 
+          suggestions: evaluation.semantic.suggestion, 
+          reasoning: evaluation.semantic.reasoning
+        }
+      ])
+      setIsEvaluating.off()
+    } catch (e) {
+      setErrorMessage(`An error occurred, likely due to the instability of GPT-4. Please try again.\n${e}`)
+      setIsEvaluating.off()
+      setEvaluationResult([])
+    }
   }
 
   const handleReset = async () => {
@@ -86,12 +96,14 @@ const App = () => {
   }
 
   return (
-    <Flex my="2rem" flexDir='column' justifyContent='flex-start' width={['95%', '95%', '80%', '50%']}>
-      <Flex mt="4rem" flexDir='row' justifyContent='space-between' alignItems='center'>
-        <Heading fontSize='4xl'>Questionnaire Translator</Heading>
+    <Flex my="2rem" py="4rem" flexDir='column' justifyContent='flex-start' width={['95%', '95%', '80%', '50%']}>
+      <Text fontSize='md' color="gray.500">Questionnaire Translator</Text>
+      <Divider mt="1rem" mb="1rem" />
+      <Flex flexDir='row' justifyContent='space-between' alignItems='center'>
+        <Heading fontSize='4xl'>{translation.length < 1 ? 'Step 1: Initial Translation' : 'Step 2: Edit & Evaluate'}</Heading>
         {translation.length > 0 &&
         <Stack direction='horizontal' height="100%" align='center'>
-          <ExportControls originalItems={original} translatedItems={translation} />
+          <ExportControls originalItems={original} translatedItems={translation} evaluations={evaluationResult} />
           <Divider orientation='vertical' />
            <Button rightIcon={<DeleteIcon />} colorScheme='red' onClick={handleFullReset}>Start over</Button>
         </Stack>}
@@ -118,7 +130,10 @@ const App = () => {
             value={original.join('\n')} mb='2em'
             placeholder={'Questionnaire items separated by a newline, e.g. \n\nThis is a questionnaire item.\nThis is another questionnaire item.\nThis is a third questionnaire item.'}
           />
-          <Button onClick={handleTranslate} colorScheme='teal' width="12rem" alignSelf='center' isLoading={isEvaluating}>Translate</Button>
+          <HStack align='center' alignSelf='center'>
+            <Button onClick={handleTranslate} colorScheme='teal' width="12rem" alignSelf='center' isLoading={isEvaluating}>Translate</Button>
+            <Tooltip label='Translations are performed using DeepL.'><InfoOutlineIcon ml="0.25rem" mb="0.25rem" /></Tooltip>
+          </HStack>
         </>
         : <> 
           <TranslationView 
@@ -130,7 +145,7 @@ const App = () => {
             reset={handleReset}
             evaluate={handleEvaluate}
           />
-          {(translation.length > 0 && isEvaluating) && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='teal.400'/>}
+          {(translation.length > 0 && isEvaluating) && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='orange.400'/>}
           {evaluationResult.length > 0 && <EvaluationResultList results={evaluationResult} />}
         </>
       }

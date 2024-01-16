@@ -19,6 +19,8 @@ const BacktranslationResultField = ({ list, result, original, loading }) => {
           isInvalid={true}
           errorBorderColor={result === original ? 'green.400' : 'orange.400'}
           variant={(result === original || showOriginal) ? 'filled': 'outline'}
+          bg={showOriginal ? 'orange.50' : 'teal.50'}
+          color={showOriginal ? 'orange.900' : 'teal.900'}
           size='md'
         />
         {result !== original

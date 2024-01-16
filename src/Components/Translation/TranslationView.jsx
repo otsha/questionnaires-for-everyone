@@ -1,5 +1,6 @@
 import { React } from 'react'
-import { VStack, Button, HStack, Divider, Box, AbsoluteCenter, Heading, Tooltip, useBoolean, Flex } from '@chakra-ui/react'
+import { VStack, Button, HStack, Divider, Heading, Tooltip, useBoolean, Flex } from '@chakra-ui/react'
+import { QuestionOutlineIcon } from '@chakra-ui/icons'
 import TranslationResultField from './TranslationResultField'
 import BacktranslationResultField from './BacktranslationResultField'
 import { ChatIcon, RepeatIcon } from '@chakra-ui/icons'
@@ -35,7 +36,7 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
     <Flex flexDir='column' justify='center' align='stretch'>
       <HStack align="stretch" spacing="2rem" height='100%'>
         <VStack width='50%' align="start">
-        <Heading size='md'>Tweak translation</Heading>
+          <Heading size='md'>Tweak the translation</Heading>
           <Divider mt="0.1rem" mb="1rem"/>
           {translationList.map((i) => {
             return <TranslationResultField key={`tl-result-${translationList.indexOf(i)}`} result={i} handleTweak={tweakTranslationItem} loading={leftSideUpdating}/>
@@ -60,8 +61,8 @@ const TranslationView = ({ originalList, translationList, setTranslationList, ba
         <Tooltip label='Translates the translation back to the original language for comparison.'>
           <Button rightIcon={<RepeatIcon />} onClick={() => handleLoad(backTranslate, true)} width="10rem" colorScheme='teal'>Backtranslate</Button>
         </Tooltip>
-        <Tooltip label='Propmpts GPT-4 to assess the translation quality.'>
-          <Button rightIcon={<ChatIcon />} onClick={() => handleLoad(evaluate, false)} width="10rem" colorScheme='teal' variant='outline'>Evaluate</Button>
+        <Tooltip label='Prompts GPT-4 to assess the translation quality by comparing the target language version against the original.'>
+          <Button rightIcon={<ChatIcon />} onClick={() => handleLoad(evaluate, false)} width="10rem" colorScheme='orange' variant='solid'>Evaluate</Button>
         </Tooltip>
       </HStack>
     </Flex>

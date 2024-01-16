@@ -103,7 +103,7 @@ const App = () => {
         <Heading fontSize='4xl'>{translation.length < 1 ? 'Step 1: Initial Translation' : 'Step 2: Edit & Evaluate'}</Heading>
         {translation.length > 0 &&
         <Stack direction='horizontal' height="100%" align='center'>
-          <ExportControls originalItems={original} translatedItems={translation} />
+          <ExportControls originalItems={original} translatedItems={translation} evaluations={evaluationResult} />
           <Divider orientation='vertical' />
            <Button rightIcon={<DeleteIcon />} colorScheme='red' onClick={handleFullReset}>Start over</Button>
         </Stack>}
@@ -145,7 +145,7 @@ const App = () => {
             reset={handleReset}
             evaluate={handleEvaluate}
           />
-          {(translation.length > 0 && isEvaluating) && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='teal.400'/>}
+          {(translation.length > 0 && isEvaluating) && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='orange.400'/>}
           {evaluationResult.length > 0 && <EvaluationResultList results={evaluationResult} />}
         </>
       }

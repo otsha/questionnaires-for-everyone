@@ -1,5 +1,5 @@
 import { React, useState } from 'react'
-import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Spinner, Stack, Alert, AlertIcon, Tooltip } from '@chakra-ui/react'
+import { Button, Flex, Text, Textarea, HStack, VStack, Divider, Heading, useBoolean, Stack, Alert, AlertIcon, Tooltip, Progress } from '@chakra-ui/react'
 import { DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons'
 import { translate, evaluate } from './Scripts/translationService'
 
@@ -10,12 +10,14 @@ import ExportControls from './Components/ExportControls'
 
 const App = () => {
   const [original, setOriginal] = useState([])
+  const [initialTranslation, setInitialTranslation] = useState([])
   const [translation, setTranslation] = useState([])
   const [backTranslation, setBackTranslation] = useState([])
   const [sourceLang, setSourceLang] = useState('EN')
   const [targetLang, setTargetLang] = useState('FI')
   const [evaluationResult, setEvaluationResult] = useState([])
   const [isEvaluating, setIsEvaluating] = useBoolean(false)
+  const [isTranslating, setIsTranslating] = useBoolean(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const handleInput = (e) => {
@@ -31,11 +33,16 @@ const App = () => {
       return
     }
 
-    setIsEvaluating.on()
+    setIsTranslating.on()
     setOriginal(uniqueItems)
     const fwTranslated = await translate(uniqueItems, sourceLang, targetLang)
-    setIsEvaluating.off()
+    
+    if (translation.length < 1) {
+      setInitialTranslation(fwTranslated)
+    }
+
     setTranslation(fwTranslated)
+    setIsTranslating.off()
   }
 
   const handleBacktranslate = async () => {
@@ -50,8 +57,10 @@ const App = () => {
       backtranslateTo = 'EN-US'
     }
 
+    setIsTranslating.on()
     const bTranslated = await translate(translation, targetLang, backtranslateTo)
     setBackTranslation(bTranslated)
+    setIsTranslating.off()
   }
 
   const handleEvaluate = async () => {
@@ -63,7 +72,8 @@ const App = () => {
       const evaluation = await evaluate(original, translation, backTranslation, sourceLang, targetLang)
       setEvaluationResult([
         { title: "GEMBA-DA", score: parseInt(evaluation.gemba)},
-        { title: "SSA", 
+        { 
+          title: "SSA", 
           score: parseInt(evaluation.semantic.score), 
           suggestions: evaluation.semantic.suggestion, 
           reasoning: evaluation.semantic.reasoning
@@ -71,7 +81,7 @@ const App = () => {
       ])
       setIsEvaluating.off()
     } catch (e) {
-      setErrorMessage(`An error occurred, likely due to the instability of GPT-4. Please try again.\n${e}`)
+      showError(`An error occurred, likely due to the instability of GPT-4. Please try again.\n${e}`)
       setIsEvaluating.off()
       setEvaluationResult([])
     }
@@ -80,7 +90,7 @@ const App = () => {
   const handleReset = async () => {
     setBackTranslation([])
     setEvaluationResult([])
-    await handleTranslate()
+    setTranslation(initialTranslation)
   }
 
   const handleFullReset = async () => {
@@ -88,6 +98,7 @@ const App = () => {
     setTranslation([])
     setBackTranslation([])
     setEvaluationResult([])
+    setInitialTranslation([])
   }
 
   const showError = (message) => {
@@ -136,6 +147,7 @@ const App = () => {
           </HStack>
         </>
         : <> 
+          {errorMessage && <Alert status='warning' mb="1rem" variant="left-accent"><AlertIcon />{errorMessage}</Alert>}
           <TranslationView 
             originalList={original} 
             translationList={translation} 
@@ -144,8 +156,10 @@ const App = () => {
             backTranslate={handleBacktranslate}
             reset={handleReset}
             evaluate={handleEvaluate}
+            isEvaluating={isEvaluating}
+            isTranslating={isTranslating}
           />
-          {(translation.length > 0 && isEvaluating) && <Spinner size='xl' alignSelf='center' mt='2rem' thickness='4px' color='orange.400'/>}
+          {isEvaluating &&  <VStack mt="2rem" align="center"><Text>Evaluating. This might take a bit...</Text><Progress width="50%" isIndeterminate size="sm" colorScheme='orange'/></VStack>}
           {evaluationResult.length > 0 && <EvaluationResultList results={evaluationResult} />}
         </>
       }

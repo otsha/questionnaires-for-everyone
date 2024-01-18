@@ -7,7 +7,7 @@ const EvaluationResultCard = ({ result }) => {
   const selectResultInfoLabel = () => {
     switch (result.title) {
       case 'GEMBA-DA':
-        return 'An overall score of translation quality.'
+        return 'An overall score of translation quality (Kocmi, T., & Federmann, C. (2023). Large language models are state-of-the-art evaluators of translation quality. arXiv preprint arXiv:2302.14520.)'
       case 'SSA':
         return 'Semantic similarity assessment. Experimental.'
       default:

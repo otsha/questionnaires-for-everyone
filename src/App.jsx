@@ -142,7 +142,7 @@ const App = () => {
             placeholder={'Questionnaire items separated by a newline, e.g. \n\nThis is a questionnaire item.\nThis is another questionnaire item.\nThis is a third questionnaire item.'}
           />
           <HStack align='center' alignSelf='center'>
-            <Button onClick={handleTranslate} colorScheme='teal' width="12rem" alignSelf='center' isLoading={isEvaluating}>Translate</Button>
+            <Button onClick={handleTranslate} colorScheme='teal' width="12rem" alignSelf='center' isLoading={isTranslating}>Translate</Button>
             <Tooltip label='Translations are performed using DeepL.'><InfoOutlineIcon ml="0.25rem" mb="0.25rem" /></Tooltip>
           </HStack>
         </>

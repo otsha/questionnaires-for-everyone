@@ -33,9 +33,16 @@ const App = () => {
       return
     }
 
+    let translateTo = targetLang
+    if (targetLang.includes('EN')) {
+      translateTo = 'EN-US'
+    } else if (targetLang.includes('PT')) {
+      translateTo = 'PT-PT'
+    }
+
     setIsTranslating.on()
     setOriginal(uniqueItems)
-    const fwTranslated = await translate(uniqueItems, sourceLang, targetLang)
+    const fwTranslated = await translate(uniqueItems, sourceLang, translateTo)
     
     if (translation.length < 1) {
       setInitialTranslation(fwTranslated)
@@ -55,6 +62,8 @@ const App = () => {
    
     if (sourceLang.includes('EN')) {
       backtranslateTo = 'EN-US'
+    } else if (sourceLang.includes('PT')) {
+      backtranslateTo = 'PT-PT'
     }
 
     setIsTranslating.on()

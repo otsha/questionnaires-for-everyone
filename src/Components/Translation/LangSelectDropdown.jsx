@@ -7,6 +7,7 @@ const LangSelectDropdown = ({ handleSelect, defaultValue }) => {
       <option value='EN'>English</option>
       <option value='FI'>Finnish</option>
       <option value='DE'>German</option>
+      <option value='PT'>Portuguese</option>
     </Select>
   )
 }

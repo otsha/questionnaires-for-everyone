@@ -1,7 +1,8 @@
 {
-  "name": "tl-eval",
-  "private": true,
-  "version": "0.0.0",
+  "name": "questionnaires-for-everyone",
+  "author": "otsha",
+  "license": "GPL-3.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
